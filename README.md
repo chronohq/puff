@@ -31,6 +31,16 @@ f906e2fa87fbf6e9f0b0b44e2fc81993
 2b6ce246d8eeb1b546ed56e8ae927437
 ```
 
+### Generate random bytes and write it to file.
+
+Similar to using `dd` for generating test data, you can use `puff` to create a binary file with random bytes:
+
+```bash
+$ puff binary --bytes 10485760 -o /tmp/puff-10mb.bin
+$ stat -c %s /tmp/puff-10mb.bin
+10485760
+```
+
 ## Contributing
 
 Contributions of any kind are welcome.
