@@ -22,6 +22,10 @@ const (
 	outputParam    = "output"
 )
 
+// version holds the application version number. This value is set at build
+// time using the -ldflags build flag. The default value here is a placehodler.
+var version = "placeholder"
+
 // randomBytes generates a slice of random bytes of the given length.
 // Returns an error if the length is non-positive or if crypto/rand fails.
 func randomBytes(len int) ([]byte, error) {
@@ -133,8 +137,9 @@ func generateBinaryBlob(c *cli.Context) error {
 
 func main() {
 	app := &cli.App{
-		Name:  "puff",
-		Usage: "Generate random values in different formats",
+		Name:    "puff",
+		Usage:   "Generate random values in different formats",
+		Version: version,
 		Commands: []*cli.Command{
 			{
 				Name:   "hex",
