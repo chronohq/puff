@@ -1,5 +1,7 @@
 # Puff
 
+![go workflow](https://github.com/chronohq/puff/actions/workflows/go.yml/badge.svg)
+
 Puff is a command-line tool for quickly generating random values in
 different formats. At some point, software developers find themselves
 needing random values for a variety of purposes. Puff aims to make this
@@ -7,21 +9,21 @@ process as intuitive as possible.
 
 ## Quickstart
 
-### Print a random hexadecimal string (Default: 16 bytes).
+**Print a random hexadecimal string (Default: 16 bytes)**
 
 ```bash
 $ puff hex
 2cc84ba90e5277f6733aa71386a4de3b
 ```
 
-### Print a random hexadecimal string with a custom byte length.
+**Print a random hexadecimal string with a custom byte length**
 
 ```bash
 $ puff hex --bytes 32
 8c5955a659c59d4414072b45bac872964a8a8077ffbd0f0083ffad47e5b33c66
 ```
 
-### Print four random hexadecimal strings.
+**Print four random hexadecimal strings**
 
 ```bash
 $ puff hex -n 4
@@ -31,7 +33,7 @@ f906e2fa87fbf6e9f0b0b44e2fc81993
 2b6ce246d8eeb1b546ed56e8ae927437
 ```
 
-### Generate random bytes and write it to file.
+**Generate random bytes and write it to a file**
 
 Similar to using `dd` for generating test data, you can use `puff` to create a binary file with random bytes:
 
