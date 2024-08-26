@@ -7,6 +7,23 @@ different formats. At some point, software developers find themselves
 needing random values for a variety of purposes. Puff aims to make this
 process as intuitive as possible.
 
+## Installation
+
+**macOS**
+
+```bash
+$ brew install chronohq/tap/puff
+```
+
+**Linux**
+
+1. Download the [latest binary release](https://github.com/chronohq/puff/releases/latest) for your system
+2. Extract the binary into `/usr/local/bin`. For example:
+
+```bash
+$ rm /usr/local/bin/puff && tar -C /usr/local/bin xvzf puff-1.2.3.linux-amd64.tar.gz
+```
+
 ## Quickstart
 
 **Print a random hexadecimal string (Default: 16 bytes)**
