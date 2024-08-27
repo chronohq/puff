@@ -24,6 +24,12 @@ brew install chronohq/tap/puff
 rm /usr/local/bin/puff && tar -C /usr/local/bin xvzf puff-1.2.3.linux-amd64.tar.gz
 ```
 
+**Windows**
+
+1. Download the [latest binary release](https://github.com/chronohq/puff/releases/latest) for your system
+2. Extract the binary using the built-in Windows file explorer or a tool like 7-Zip
+3. Open Windows Terminal and run `puff.exe` from the extraction folder
+
 ## Quickstart
 
 **Print Random Hexadecimal Strings (Default: 16 Bytes)**
