@@ -43,6 +43,10 @@ f906e2fa87fbf6e9f0b0b44e2fc81993
 ## Print a value with custom byte length
 puff hex --bytes 32
 8c5955a659c59d4414072b45bac872964a8a8077ffbd0f0083ffad47e5b33c66
+
+## Print with a custom delimiter
+puff hex -n 2 --delimiter ","
+d4bc48da024a728fee985a6257e88611,63100951b7ff67de3f7e9c1d0b98101d
 ```
 
 **Print UUID (Version 7) as Hexadecimal Strings**
