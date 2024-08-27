@@ -2,10 +2,10 @@
 
 ![go workflow](https://github.com/chronohq/puff/actions/workflows/go.yml/badge.svg)
 
-Puff is a command-line tool for quickly generating random values in
-different formats. At some point, software developers find themselves
-needing random values for a variety of purposes. Puff aims to make this
-process as intuitive as possible.
+Puff is a command-line tool designed to quickly generate random values
+in various formats such as hexadecimal strings, UUIDs, and binary blobs.
+Whether for testing, cryptographic purposes, or data seeding, Puff makes
+the process straightforward.
 
 ## Installation
 
