@@ -28,6 +28,8 @@ release-windows-amd64:
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build ${RELEASE_BUILD_FLAGS} -o $(RELEASE_DIR)/$(BINARY_NAME).exe
 	zip -j $(BINARY_NAME)-$(VERSION)-windows-amd64.zip $(RELEASE_DIR)/$(BINARY_NAME).exe
 
+release: release-darwin-arm64 release-linux-amd64 release-windows-amd64
+
 require-version:
 	@if [ "$(VERSION)" = "dev" ]; then \
 		echo "You must set the VERSION"; \
