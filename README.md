@@ -12,7 +12,7 @@ process as intuitive as possible.
 **macOS**
 
 ```bash
-$ brew install chronohq/tap/puff
+brew install chronohq/tap/puff
 ```
 
 **Linux**
@@ -21,42 +21,59 @@ $ brew install chronohq/tap/puff
 2. Extract the binary into `/usr/local/bin`. For example:
 
 ```bash
-$ rm /usr/local/bin/puff && tar -C /usr/local/bin xvzf puff-1.2.3.linux-amd64.tar.gz
+rm /usr/local/bin/puff && tar -C /usr/local/bin xvzf puff-1.2.3.linux-amd64.tar.gz
 ```
 
 ## Quickstart
 
-**Print a random hexadecimal string (Default: 16 bytes)**
+**Print a Random Hexadecimal String (Default: 16 Bytes)**
 
 ```bash
-$ puff hex
+puff hex
 2cc84ba90e5277f6733aa71386a4de3b
 ```
 
-**Print a random hexadecimal string with a custom byte length**
+**Print a Random Hexadecimal String with a Custom Byte Length**
 
 ```bash
-$ puff hex --bytes 32
+puff hex --bytes 32
 8c5955a659c59d4414072b45bac872964a8a8077ffbd0f0083ffad47e5b33c66
 ```
 
-**Print four random hexadecimal strings**
+**Print Four Random Hexadecimal Strings**
 
 ```bash
-$ puff hex -n 4
+puff hex -n 3
 f906e2fa87fbf6e9f0b0b44e2fc81993
 5d7347c2fe7fda44097604c06ae4f25f
 55ea03cb94847b52b6911d4b517bcc01
-2b6ce246d8eeb1b546ed56e8ae927437
 ```
 
-**Generate random bytes and write it to a file**
+**Print UUID (Version 7) as Hexadecimal Strings**
+
+Use `puff uuid --help` to explore command options. Below are basic examples:
+
+```bash
+# Print three UUIDs in standard dashed format
+puff uuid -n 3
+019191ac-e84b-7e58-8ca9-d44d68ecd15f
+019191ac-e84b-7e92-b277-07c67a7db551
+019191ac-e84b-7e98-aeab-fb78ea01adbf
+
+# Print three UUIDs in compact dash-less format
+puff uuid -n 3 --compact
+019191ace35c71bfb517a4c1269716b8
+019191ace35c71fa8d14ddf9e56c1faf
+019191ace35c7222ab132ddc40b11eb7
+```
+
+**Generate Random Bytes and Write It to a File**
 
 Similar to using `dd` for generating test data, you can use `puff` to create a binary file with random bytes:
 
 ```bash
-$ puff binary --bytes 10485760 -o /tmp/puff-10mb.bin
-$ stat -c %s /tmp/puff-10mb.bin
+puff binary --bytes 10485760 -o /tmp/puff-10mb.bin
+stat -c %s /tmp/puff-10mb.bin
 10485760
 ```
 

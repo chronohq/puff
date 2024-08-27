@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/google/uuid"
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,6 +19,7 @@ const (
 	defaultDelimiter = "\n"
 
 	bytesParam     = "bytes"
+	compactParam   = "compact"
 	delimiterParam = "delimiter"
 	numParam       = "num"
 	outputParam    = "output"
@@ -103,6 +106,44 @@ func generateHex(c *cli.Context) error {
 	return nil
 }
 
+// generateUUID generates one or more UUID version 7 strings in hexadeicmal.
+func generateUUID(c *cli.Context) error {
+	compact := c.Bool(compactParam)
+	iterations := c.Int(numParam)
+
+	if iterations <= 0 {
+		return errors.New("num must be greater than 0")
+	}
+
+	delimiter := resolveDelimiter(c.String(delimiterParam))
+
+	if len(delimiter) == 0 {
+		return errors.New("delimiter cannot be blank")
+	}
+
+	for i := 0; i < iterations; i++ {
+		id, err := uuid.NewV7()
+
+		if err != nil {
+			return err
+		}
+
+		line := id.String()
+
+		if compact {
+			line = strings.ReplaceAll(line, "-", "")
+		}
+
+		if i < iterations-1 {
+			fmt.Printf("%s%s", line, delimiter)
+		} else {
+			fmt.Println(line)
+		}
+	}
+
+	return nil
+}
+
 // generateBinaryBlob generates a binary blob of random bytes and writes it
 // to the specified file. The file path must be provided. The number of bytes
 // to generate is 1MB unless specified by the command line argument.
@@ -157,6 +198,29 @@ func main() {
 						Aliases: []string{"n"},
 						Usage:   "number of hex strings to generate",
 						Value:   1,
+					},
+					&cli.StringFlag{
+						Name:    "delimiter",
+						Aliases: []string{"d", "delimit"},
+						Usage:   "delimiter between values",
+						Value:   defaultDelimiter,
+					},
+				},
+			},
+			{
+				Name:   "uuid",
+				Usage:  "Generate UUID strings (default: UUIDv7)",
+				Action: generateUUID,
+				Flags: []cli.Flag{
+					&cli.IntFlag{
+						Name:    "num",
+						Aliases: []string{"n"},
+						Usage:   "number of uuid strings to generate",
+						Value:   1,
+					},
+					&cli.BoolFlag{
+						Name:  "compact",
+						Usage: "print uuid strings without dashes",
 					},
 					&cli.StringFlag{
 						Name:    "delimiter",
