@@ -14,15 +14,20 @@ import (
 )
 
 const (
-	defaultBlobBytes = 1024 * 1024
-	defaultHexBytes  = 16
-	defaultDelimiter = "\n"
+	uuidV4 = 4
+	uuidV7 = 7
 
-	bytesParam     = "bytes"
-	compactParam   = "compact"
-	delimiterParam = "delimiter"
-	numParam       = "num"
-	outputParam    = "output"
+	defaultBlobBytes   = 1024 * 1024
+	defaultHexBytes    = 16
+	defaultUUIDVersion = uuidV7
+	defaultDelimiter   = "\n"
+
+	bytesParam       = "bytes"
+	compactParam     = "compact"
+	delimiterParam   = "delimiter"
+	numParam         = "num"
+	outputParam      = "output"
+	uuidVersionParam = "version"
 )
 
 // version holds the application version number. This value is set at build
@@ -106,10 +111,16 @@ func generateHex(c *cli.Context) error {
 	return nil
 }
 
-// generateUUID generates one or more UUID version 7 strings in hexadeicmal.
+// generateUUID generates one or more UUID strings in hexadeicmal. It defaults
+// to generating version 7 UUIDs but also supports the widely used version 4.
 func generateUUID(c *cli.Context) error {
+	version := c.Int(uuidVersionParam)
 	compact := c.Bool(compactParam)
 	iterations := c.Int(numParam)
+
+	if version != uuidV4 && version != uuidV7 {
+		return errors.New("unsupported uuid version")
+	}
 
 	if iterations <= 0 {
 		return errors.New("num must be greater than 0")
@@ -122,7 +133,14 @@ func generateUUID(c *cli.Context) error {
 	}
 
 	for i := 0; i < iterations; i++ {
-		id, err := uuid.NewV7()
+		var err error
+		var id uuid.UUID
+
+		if version == uuidV4 {
+			id, err = uuid.NewRandom()
+		} else {
+			id, err = uuid.NewV7()
+		}
 
 		if err != nil {
 			return err
@@ -217,6 +235,12 @@ func main() {
 						Aliases: []string{"n"},
 						Usage:   "number of uuid strings to generate",
 						Value:   1,
+					},
+					&cli.IntFlag{
+						Name:    "version",
+						Aliases: []string{"ver"},
+						Usage:   "uuid version to generate",
+						Value:   defaultUUIDVersion,
 					},
 					&cli.BoolFlag{
 						Name:  "compact",
