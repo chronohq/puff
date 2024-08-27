@@ -1,6 +1,7 @@
 # Puff
 
-![go workflow](https://github.com/chronohq/puff/actions/workflows/go.yml/badge.svg)
+[![go workflow](https://github.com/chronohq/puff/actions/workflows/go.yml/badge.svg)](https://github.com/chronohq/puff/actions/workflows/go.yml)
+[![mit license](https://img.shields.io/badge/license-MIT-green)](/LICENSE)
 
 Puff is a command-line tool designed to quickly generate random values
 in various formats such as hexadecimal strings, UUIDs, and binary blobs.
@@ -18,7 +19,7 @@ brew install chronohq/tap/puff
 **Linux**
 
 1. Download the [latest binary release](https://github.com/chronohq/puff/releases/latest) for your system
-2. Extract the binary into `/usr/local/bin`. For example:
+2. Extract the binary into `/usr/local/bin`, for example:
 
 ```bash
 rm /usr/local/bin/puff && tar -C /usr/local/bin xvzf puff-1.2.3.linux-amd64.tar.gz
@@ -33,25 +34,25 @@ rm /usr/local/bin/puff && tar -C /usr/local/bin xvzf puff-1.2.3.linux-amd64.tar.
 
 ## Quickstart
 
-### Print Random Hexadecimal Strings (Default: 16 Bytes)
+### Print Hexadecimal Strings (Default: 16 Bytes)
 
-Use `puff hex --help` to explore command options.
+Use `puff hex --help` to view available command options.
 
 ```bash
-# Print one value
+# Print a single hex-encoded value
 puff hex
 2cc84ba90e5277f6733aa71386a4de3b
 
-# Print two values
+# Print two hex-encoded values
 puff hex -n 2
 f906e2fa87fbf6e9f0b0b44e2fc81993
 5d7347c2fe7fda44097604c06ae4f25f
 
-# Print a value with custom byte length
+# Print a hex-encoded value with custom byte length (32 bytes)
 puff hex --bytes 32
 8c5955a659c59d4414072b45bac872964a8a8077ffbd0f0083ffad47e5b33c66
 
-# Print with a custom delimiter
+# Print hex-encoded values separated by a comma
 puff hex -n 2 --delimiter ","
 d4bc48da024a728fee985a6257e88611,63100951b7ff67de3f7e9c1d0b98101d
 ```
@@ -59,7 +60,7 @@ d4bc48da024a728fee985a6257e88611,63100951b7ff67de3f7e9c1d0b98101d
 ### Print UUIDs as Hexadecimal Strings
 
 By default, Puff generates version 7 UUIDs, but version 4 is also supported.
-Use `puff uuid --help` for more details.
+Use `puff uuid --help` to view available command options.
 
 ```bash
 # Print two version 7 UUIDs in the standard dashed format
@@ -72,17 +73,38 @@ puff uuid -n 2 --compact
 019191ace35c71bfb517a4c1269716b8
 019191ace35c71fa8d14ddf9e56c1faf
 
-# Print a compact, dash-less UUID version 4 string
+# Print a compact, dash-less UUID version 4 value
 puff uuid --version 4 --compact
 f357e1d4dc0d4aa285cb7cef37cb3ad0
 ```
 
-### Generate Random Bytes and Write It to a File
+### Print Random Base64 Strings (Default: 16 Bytes)
+
+Use `puff base64 --help` to view available command options.
+
+```bash
+# Print a single base64-encoded value
+puff base64
+4YamGT7lPlJakROuu7zN5w==
+
+# Print a base64-encoded value with custom byte length (32 bytes)
+puff base64 --bytes 32
+YPjRDxaUYFkurRAhz0MUzzl8Hh3Y0Z79DZcrJX5R/4g=
+
+# Print a base64-encoded value using URL-safe encoding
+puff base64 --url-safe
+7KtUKGFAvVHoDdsQDIuRtQ
+```
+
+### Create a Binary File with Random Bytes
 
 Similar to using `dd` for generating test data, you can use `puff` to create a binary file with random bytes:
 
 ```bash
+# Create a 10MB binary file with random bytes
 puff binary --bytes 10485760 -o /tmp/puff-10mb.bin
+
+# Verify the file size
 stat -c %s /tmp/puff-10mb.bin
 10485760
 ```
@@ -94,5 +116,5 @@ If you're submitting a PR, please follow [Go's commit message structure](https:/
 
 ## License
 
-Puff is released under the [MIT license](https://opensource.org/license/MIT).
+Puff is available under the [MIT license](https://opensource.org/license/MIT).
 See the [LICENSE](LICENSE) file for details.

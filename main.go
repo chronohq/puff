@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -19,7 +20,7 @@ const (
 	uuidV7 = 7
 
 	defaultBlobBytes   = 1024 * 1024
-	defaultHexBytes    = 16
+	defaultDataBytes   = 16
 	defaultUUIDVersion = uuidV7
 	defaultDelimiter   = "\n"
 
@@ -28,6 +29,7 @@ const (
 	delimiterParam   = "delimiter"
 	numParam         = "num"
 	outputParam      = "output"
+	urlSafeParam     = "url-safe"
 	uuidVersionParam = "version"
 
 	red      = "\033[31m"
@@ -124,15 +126,14 @@ func generateHex(c *cli.Context) error {
 		src, err := randomBytes(c.Int(bytesParam))
 
 		if err != nil {
-			return err
+			return paintError(err)
 		}
 
-		if i < iterations-1 {
-			fmt.Printf("%s%s", hex.EncodeToString(src), delimiter)
-		} else {
-			// In streaming mode, the final delimiter is a newline character.
-			fmt.Println(hex.EncodeToString(src))
+		if i == iterations-1 {
+			delimiter = defaultDelimiter
 		}
+
+		fmt.Printf("%s%s", hex.EncodeToString(src), delimiter)
 	}
 
 	return nil
@@ -157,7 +158,7 @@ func generateUUID(c *cli.Context) error {
 	delimiter := resolveDelimiter(c.String(delimiterParam))
 
 	if len(delimiter) == 0 {
-		return errBlankDelimiter
+		return paintError(errBlankDelimiter)
 	}
 
 	for i := 0; i < iterations; i++ {
@@ -171,7 +172,7 @@ func generateUUID(c *cli.Context) error {
 		}
 
 		if err != nil {
-			return err
+			return paintError(err)
 		}
 
 		line := id.String()
@@ -180,10 +181,43 @@ func generateUUID(c *cli.Context) error {
 			line = strings.ReplaceAll(line, "-", "")
 		}
 
-		if i < iterations-1 {
-			fmt.Printf("%s%s", line, delimiter)
+		if i == iterations-1 {
+			delimiter = defaultDelimiter
+		}
+
+		fmt.Printf("%s%s", line, delimiter)
+	}
+
+	return nil
+}
+
+// generateBase64 generates cryptographically secure, randomly generated
+// base64-encoded strings. It uses standard or URL-safe encoding based on
+// the "--url-safe" command-line option.
+func generateBase64(c *cli.Context) error {
+	iterations := c.Int(numParam)
+	delimiter := resolveDelimiter(c.String(delimiterParam))
+	urlSafe := c.Bool(urlSafeParam)
+
+	if len(delimiter) == 0 {
+		return paintError(errBlankDelimiter)
+	}
+
+	for i := 0; i < iterations; i++ {
+		src, err := randomBytes(c.Int(bytesParam))
+
+		if err != nil {
+			return paintError(err)
+		}
+
+		if i == iterations-1 {
+			delimiter = defaultDelimiter
+		}
+
+		if urlSafe {
+			fmt.Printf("%s%s", base64.RawURLEncoding.EncodeToString(src), delimiter)
 		} else {
-			fmt.Println(line)
+			fmt.Printf("%s%s", base64.StdEncoding.EncodeToString(src), delimiter)
 		}
 	}
 
@@ -233,7 +267,7 @@ func main() {
 						Name:    "bytes",
 						Aliases: []string{"b"},
 						Usage:   "length of the source data in bytes",
-						Value:   defaultHexBytes,
+						Value:   defaultDataBytes,
 					},
 					&cli.IntFlag{
 						Name:    "num",
@@ -273,8 +307,37 @@ func main() {
 					&cli.StringFlag{
 						Name:    "delimiter",
 						Aliases: []string{"d"},
-						Usage:   "delimiter between values",
+						Usage:   "value separator",
 						Value:   defaultDelimiter,
+					},
+				},
+			},
+			{
+				Name:   "base64",
+				Usage:  "Generate base64 strings (default: 16-bytes)",
+				Action: generateBase64,
+				Flags: []cli.Flag{
+					&cli.IntFlag{
+						Name:    "bytes",
+						Aliases: []string{"b"},
+						Usage:   "length of the source data in bytes",
+						Value:   defaultDataBytes,
+					},
+					&cli.IntFlag{
+						Name:    "num",
+						Aliases: []string{"n"},
+						Usage:   "number of base64 strings to generate",
+						Value:   1,
+					},
+					&cli.StringFlag{
+						Name:    "delimiter",
+						Aliases: []string{"d"},
+						Usage:   "value separator",
+						Value:   defaultDelimiter,
+					},
+					&cli.BoolFlag{
+						Name:  "url-safe",
+						Usage: "use url-safe encoding",
 					},
 				},
 			},
