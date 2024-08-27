@@ -34,7 +34,7 @@ rm /usr/local/bin/puff && tar -C /usr/local/bin xvzf puff-1.2.3.linux-amd64.tar.
 
 ## Quickstart
 
-### Print Hexadecimal Strings (Default: 16 Bytes)
+### Print Hexadecimal Values (Default: 16 Bytes)
 
 Use `puff hex --help` to view available command options.
 
@@ -57,7 +57,7 @@ puff hex -n 2 --delimiter ","
 d4bc48da024a728fee985a6257e88611,63100951b7ff67de3f7e9c1d0b98101d
 ```
 
-### Print UUIDs as Hexadecimal Strings
+### Print UUIDs as Hexadecimal Values
 
 By default, Puff generates version 7 UUIDs, but version 4 is also supported.
 Use `puff uuid --help` to view available command options.
@@ -78,7 +78,7 @@ puff uuid --version 4 --compact
 f357e1d4dc0d4aa285cb7cef37cb3ad0
 ```
 
-### Print Random Base64 Strings (Default: 16 Bytes)
+### Print Base64 Values (Default: 16 Bytes)
 
 Use `puff base64 --help` to view available command options.
 
