@@ -21,18 +21,25 @@ release-linux-amd64: require-version
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ${RELEASE_BUILD_FLAGS} -o $(RELEASE_DIR)/$(BINARY_NAME)
 	tar -czvf $(BINARY_NAME)-$(VERSION)-linux-amd64.tar.gz -C $(RELEASE_DIR) $(BINARY_NAME)
 
-release-windows-amd64:
+release-linux-arm64: require-version
+	@echo "Building for linux-arm64"
+	rm -rf $(RELEASE_DIR)
+	go vet ./...
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build ${RELEASE_BUILD_FLAGS} -o $(RELEASE_DIR)/$(BINARY_NAME)
+	tar -czvf $(BINARY_NAME)-$(VERSION)-linux-arm64.tar.gz -C $(RELEASE_DIR) $(BINARY_NAME)
+
+release-windows-amd64: require-version
 	@echo "Building for windows-amd64"
 	rm -rf $(RELEASE_DIR)
 	go vet ./...
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build ${RELEASE_BUILD_FLAGS} -o $(RELEASE_DIR)/$(BINARY_NAME).exe
 	zip -j $(BINARY_NAME)-$(VERSION)-windows-amd64.zip $(RELEASE_DIR)/$(BINARY_NAME).exe
 
-release: release-darwin-arm64 release-linux-amd64 release-windows-amd64
+release: release-darwin-arm64 release-linux-amd64 release-linux-arm64 release-windows-amd64
 
 require-version:
 	@if [ "$(VERSION)" = "dev" ]; then \
-		echo "You must set the VERSION"; \
+		echo "You must set the VERSION environemnt variable"; \
 		exit 1; \
 	fi
 
