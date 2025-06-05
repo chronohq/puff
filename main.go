@@ -29,6 +29,7 @@ const (
 	delimiterParam   = "delimiter"
 	numParam         = "num"
 	outputParam      = "output"
+	suffixParam      = "suffix"
 	urlSafeParam     = "url-safe"
 	uuidVersionParam = "version"
 
@@ -110,6 +111,7 @@ func printError(w io.Writer, err error) {
 // delimiter, except the final value.
 func generateHex(c *cli.Context) error {
 	iterations := c.Int(numParam)
+	suffix := c.String(suffixParam)
 
 	if iterations <= 0 {
 		printError(c.App.ErrWriter, errInvalidIterations)
@@ -122,7 +124,7 @@ func generateHex(c *cli.Context) error {
 		return errBlankDelimiter
 	}
 
-	for i := 0; i < iterations; i++ {
+	for i := range iterations {
 		src, err := randomBytes(c.Int(bytesParam))
 
 		if err != nil {
@@ -133,7 +135,7 @@ func generateHex(c *cli.Context) error {
 			delimiter = defaultDelimiter
 		}
 
-		fmt.Printf("%s%s", hex.EncodeToString(src), delimiter)
+		fmt.Printf("%s%s%s", hex.EncodeToString(src), suffix, delimiter)
 	}
 
 	return nil
@@ -145,6 +147,7 @@ func generateUUID(c *cli.Context) error {
 	version := c.Int(uuidVersionParam)
 	compact := c.Bool(compactParam)
 	iterations := c.Int(numParam)
+	suffix := c.String(suffixParam)
 
 	if version != uuidV4 && version != uuidV7 {
 		return paintError(errors.New("invalid uuid version (supported: 4, 7)"))
@@ -185,7 +188,7 @@ func generateUUID(c *cli.Context) error {
 			delimiter = defaultDelimiter
 		}
 
-		fmt.Printf("%s%s", line, delimiter)
+		fmt.Printf("%s%s%s", line, suffix, delimiter)
 	}
 
 	return nil
@@ -198,6 +201,7 @@ func generateBase64(c *cli.Context) error {
 	iterations := c.Int(numParam)
 	delimiter := resolveDelimiter(c.String(delimiterParam))
 	urlSafe := c.Bool(urlSafeParam)
+	suffix := c.String(suffixParam)
 
 	if len(delimiter) == 0 {
 		return paintError(errBlankDelimiter)
@@ -215,9 +219,9 @@ func generateBase64(c *cli.Context) error {
 		}
 
 		if urlSafe {
-			fmt.Printf("%s%s", base64.RawURLEncoding.EncodeToString(src), delimiter)
+			fmt.Printf("%s%s%s", base64.RawURLEncoding.EncodeToString(src), suffix, delimiter)
 		} else {
-			fmt.Printf("%s%s", base64.StdEncoding.EncodeToString(src), delimiter)
+			fmt.Printf("%s%s%s", base64.StdEncoding.EncodeToString(src), suffix, delimiter)
 		}
 	}
 
@@ -253,6 +257,19 @@ func generateBinaryBlob(c *cli.Context) error {
 }
 
 func main() {
+	delimiterFlag := &cli.StringFlag{
+		Name:    "delimiter",
+		Aliases: []string{"d"},
+		Usage:   "delimiter between values",
+		Value:   defaultDelimiter,
+	}
+
+	suffixFlag := &cli.StringFlag{
+		Name:    "suffix",
+		Aliases: []string{"s"},
+		Usage:   "optional value to append to the values",
+	}
+
 	app := &cli.App{
 		Name:    "puff",
 		Usage:   "Generate random values in different formats",
@@ -275,12 +292,8 @@ func main() {
 						Usage:   "number of hex strings to generate",
 						Value:   1,
 					},
-					&cli.StringFlag{
-						Name:    "delimiter",
-						Aliases: []string{"d"},
-						Usage:   "delimiter between values",
-						Value:   defaultDelimiter,
-					},
+					delimiterFlag,
+					suffixFlag,
 				},
 			},
 			{
@@ -304,12 +317,8 @@ func main() {
 						Name:  "compact",
 						Usage: "print uuid strings without dashes",
 					},
-					&cli.StringFlag{
-						Name:    "delimiter",
-						Aliases: []string{"d"},
-						Usage:   "value separator",
-						Value:   defaultDelimiter,
-					},
+					delimiterFlag,
+					suffixFlag,
 				},
 			},
 			{
@@ -329,16 +338,12 @@ func main() {
 						Usage:   "number of base64 strings to generate",
 						Value:   1,
 					},
-					&cli.StringFlag{
-						Name:    "delimiter",
-						Aliases: []string{"d"},
-						Usage:   "value separator",
-						Value:   defaultDelimiter,
-					},
 					&cli.BoolFlag{
 						Name:  "url-safe",
 						Usage: "use url-safe encoding",
 					},
+					delimiterFlag,
+					suffixFlag,
 				},
 			},
 			{

@@ -55,6 +55,11 @@ puff hex --bytes 32
 # Print hex-encoded values separated by a comma
 puff hex -n 2 --delimiter ","
 d4bc48da024a728fee985a6257e88611,63100951b7ff67de3f7e9c1d0b98101d
+
+# Print hex-encoded values with a custom suffix
+puff hex -n 2 --suffix ".png"
+2259c58f9a774fe171720349cd715bed.png
+314fb96973ccf36ef579fcaa9303ddcc.png
 ```
 
 ### Print UUIDs as Hexadecimal Values
@@ -76,6 +81,11 @@ puff uuid -n 2 --compact
 # Print a compact, dash-less UUID version 4 value
 puff uuid --version 4 --compact
 f357e1d4dc0d4aa285cb7cef37cb3ad0
+
+# Print UUIDs with a custom suffix
+puff uuid -n 2 --compact --suffix ".png"
+019741d0e7dc77188cebae635ceb67a2.png
+019741d0e7dc773797d7c695b0402434.png
 ```
 
 ### Print Base64 Values (Default: 16 Bytes)
@@ -94,6 +104,10 @@ YPjRDxaUYFkurRAhz0MUzzl8Hh3Y0Z79DZcrJX5R/4g=
 # Print a base64-encoded value using URL-safe encoding
 puff base64 --url-safe
 7KtUKGFAvVHoDdsQDIuRtQ
+
+# Print a URL-safe base64-encoded with custom suffix
+puff base64 --url-safe --suffix ".png"
+BvOqihvrdg2kmtPQaxKx6A.png
 ```
 
 ### Create a Binary File with Random Bytes
