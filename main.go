@@ -21,7 +21,7 @@ const (
 
 	defaultBlobBytes   = 1024 * 1024
 	defaultDataBytes   = 16
-	defaultUUIDVersion = uuidV7
+	defaultUUIDVersion = uuidV4
 	defaultDelimiter   = "\n"
 
 	bytesParam       = "bytes"
@@ -298,7 +298,7 @@ func main() {
 			},
 			{
 				Name:   "uuid",
-				Usage:  "Generate UUID strings (default: UUIDv7)",
+				Usage:  "Generate UUID strings (default: UUIDv4)",
 				Action: generateUUID,
 				Flags: []cli.Flag{
 					&cli.IntFlag{
@@ -347,10 +347,9 @@ func main() {
 				},
 			},
 			{
-				Name:    "binary",
-				Aliases: []string{"bin"},
-				Usage:   "Generate a random binary blob",
-				Action:  generateBinaryBlob,
+				Name:   "binary",
+				Usage:  "Generate a random binary blob",
+				Action: generateBinaryBlob,
 				Flags: []cli.Flag{
 					&cli.IntFlag{
 						Name:    "bytes",

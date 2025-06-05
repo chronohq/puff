@@ -64,28 +64,28 @@ puff hex -n 2 --suffix ".png"
 
 ### Print UUIDs as Hexadecimal Values
 
-By default, Puff generates version 7 UUIDs, but version 4 is also supported.
+By default, Puff generates version 4 UUIDs, but version 7 is also supported.
 Use `puff uuid --help` to view available command options.
 
 ```bash
-# Print two version 7 UUIDs in the standard dashed format
+# Print two version 4 UUIDs (default)
 puff uuid -n 2
-019191ac-e84b-7e58-8ca9-d44d68ecd15f
-019191ac-e84b-7e92-b277-07c67a7db551
+da8456b6-81b6-4440-b875-0613d7183e4d
+b7aa0977-0acb-4983-8c4c-36265a8dd60b
 
-# Print two compact, dash-less version 7 UUIDs
+# Print two compact version 4 UUIDs
 puff uuid -n 2 --compact
-019191ace35c71bfb517a4c1269716b8
-019191ace35c71fa8d14ddf9e56c1faf
+3cfe31da3d444d7baf0903066c864a41
+d97ab07f0f564643be5d47ddea6a95af
 
-# Print a compact, dash-less UUID version 4 value
-puff uuid --version 4 --compact
-f357e1d4dc0d4aa285cb7cef37cb3ad0
+# Print a compact version 7 UUID (time-ordered)
+puff uuid --version 7 --compact
+019741e3fd837da48a946baaa14db4ce
 
-# Print UUIDs with a custom suffix
+# Print UUIDs with custom suffix
 puff uuid -n 2 --compact --suffix ".png"
-019741d0e7dc77188cebae635ceb67a2.png
-019741d0e7dc773797d7c695b0402434.png
+8659b17b768a4ec5b48d1bac08279750.png
+805fc8e5b2aa4de0a7f37deecbf9a606.png
 ```
 
 ### Print Base64 Values (Default: 16 Bytes)
