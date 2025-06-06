@@ -123,6 +123,10 @@ stat -c %s /tmp/puff-10mb.bin
 10485760
 ```
 
+## Learn More
+
+* [Using Custom Suffixes for File Organization](https://www.chronohq.com/blog/puff-custom-suffixes): Generate organized, time-sorted file names at scale
+
 ## Contributing
 
 Contributions of any kind are welcome.
