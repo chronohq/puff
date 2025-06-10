@@ -270,31 +270,38 @@ func main() {
 		Usage:   "optional value to append to the values",
 	}
 
+	hexCommandFlags := []cli.Flag{
+		&cli.IntFlag{
+			Name:    "bytes",
+			Aliases: []string{"b"},
+			Usage:   "length of the source data in bytes",
+			Value:   defaultDataBytes,
+		},
+		&cli.IntFlag{
+			Name:    "num",
+			Aliases: []string{"n"},
+			Usage:   "number of hex strings to generate",
+			Value:   1,
+		},
+		delimiterFlag,
+		suffixFlag,
+	}
+
 	app := &cli.App{
 		Name:    "puff",
 		Usage:   "Generate random values in different formats",
 		Version: version,
+
+		// default to the hex command if no subcommand is provided
+		Action: generateHex,
+		Flags:  hexCommandFlags,
+
 		Commands: []*cli.Command{
 			{
 				Name:   "hex",
 				Usage:  "Generate random hexadecimal strings",
 				Action: generateHex,
-				Flags: []cli.Flag{
-					&cli.IntFlag{
-						Name:    "bytes",
-						Aliases: []string{"b"},
-						Usage:   "length of the source data in bytes",
-						Value:   defaultDataBytes,
-					},
-					&cli.IntFlag{
-						Name:    "num",
-						Aliases: []string{"n"},
-						Usage:   "number of hex strings to generate",
-						Value:   1,
-					},
-					delimiterFlag,
-					suffixFlag,
-				},
+				Flags:  hexCommandFlags,
 			},
 			{
 				Name:   "uuid",

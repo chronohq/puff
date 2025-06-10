@@ -3,10 +3,9 @@
 [![go workflow](https://github.com/chronohq/puff/actions/workflows/go.yml/badge.svg)](https://github.com/chronohq/puff/actions/workflows/go.yml)
 [![mit license](https://img.shields.io/badge/license-MIT-green)](/LICENSE)
 
-Puff is a command-line tool designed to quickly generate random values
-in various formats such as hexadecimal strings, UUIDs, and binary blobs.
-Whether for testing, cryptographic purposes, or data seeding, Puff makes
-the process straightforward.
+Puff is a command-line tool for quickly generating random values in formats like hexadecimal strings, UUIDs, and binary blobs.
+It’s built on Go’s standard library and Google’s UUID package, using components that are widely used and well-tested.
+Suitable for testing, ID generation, cryptographic workflows, and data seeding.
 
 ## Installation
 
@@ -34,38 +33,39 @@ rm /usr/local/bin/puff && tar -C /usr/local/bin xvzf puff-1.2.3.linux-amd64.tar.
 
 ## Quickstart
 
-### Print Hexadecimal Values (Default: 16 Bytes)
+Running `puff` without any subcommand will generate a single hexadecimal string by default.
 
-Use `puff hex --help` to view available command options.
+### Hexadecimal (default): `puff hex --help` for options
+
+By default, Puff generates 16 random bytes and encodes them as a 32-character hexadecimal string.
 
 ```bash
 # Print a single hex-encoded value
-puff hex
+puff
 2cc84ba90e5277f6733aa71386a4de3b
 
 # Print two hex-encoded values
-puff hex -n 2
+puff -n 2
 f906e2fa87fbf6e9f0b0b44e2fc81993
 5d7347c2fe7fda44097604c06ae4f25f
 
 # Print a hex-encoded value with custom byte length (32 bytes)
-puff hex --bytes 32
+puff --bytes 32
 8c5955a659c59d4414072b45bac872964a8a8077ffbd0f0083ffad47e5b33c66
 
 # Print hex-encoded values separated by a comma
-puff hex -n 2 --delimiter ","
+puff -n 2 --delimiter ","
 d4bc48da024a728fee985a6257e88611,63100951b7ff67de3f7e9c1d0b98101d
 
 # Print hex-encoded values with a custom suffix
-puff hex -n 2 --suffix ".png"
+puff -n 2 --suffix ".png"
 2259c58f9a774fe171720349cd715bed.png
 314fb96973ccf36ef579fcaa9303ddcc.png
 ```
 
-### Print UUIDs as Hexadecimal Values
+### UUID: `puff uuid --help` for options
 
 By default, Puff generates version 4 UUIDs, but version 7 is also supported.
-Use `puff uuid --help` to view available command options.
 
 ```bash
 # Print two version 4 UUIDs (default)
@@ -88,9 +88,7 @@ puff uuid -n 2 --compact --suffix ".png"
 805fc8e5b2aa4de0a7f37deecbf9a606.png
 ```
 
-### Print Base64 Values (Default: 16 Bytes)
-
-Use `puff base64 --help` to view available command options.
+### Base64: `puff base64 --help` for options
 
 ```bash
 # Print a single base64-encoded value
@@ -110,9 +108,9 @@ puff base64 --url-safe --suffix ".png"
 BvOqihvrdg2kmtPQaxKx6A.png
 ```
 
-### Create a Binary File with Random Bytes
+### Binary: `puff binary --help` for options
 
-Similar to using `dd` for generating test data, you can use `puff` to create a binary file with random bytes:
+Similar to using `dd` for generating test data, Puff can create a binary file with random bytes (default: 1MB).
 
 ```bash
 # Create a 10MB binary file with random bytes
