@@ -1,3 +1,7 @@
+.PHONY: build test clean require-version release \
+	release-darwin-arm64 release-linux-amd64 \
+	release-linux-arm64 release-windows-amd64
+
 VERSION ?= dev
 BINARY_NAME = puff
 RELEASE_DIR = dist
@@ -6,6 +10,11 @@ RELEASE_BUILD_FLAGS=-v -ldflags "-w -s -X main.version=$(VERSION)" -trimpath
 build:
 	go vet ./...
 	go build -o $(BINARY_NAME)
+
+test:
+	go vet ./...
+	go clean -testcache
+	go test -v ./...
 
 release-darwin-arm64: require-version
 	@echo "Building for darwin-arm64"

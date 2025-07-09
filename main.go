@@ -9,7 +9,9 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/urfave/cli/v2"
@@ -40,6 +42,7 @@ const (
 var (
 	errInvalidIterations = errors.New("--num must be greater than 0")
 	errBlankDelimiter    = errors.New("--delimiter cannot be blank")
+	errInvalidUUIDV7Time = errors.New("UUIDv7 does not support pre unix epoch")
 )
 
 // version holds the application version number. This value is set at build
@@ -254,6 +257,45 @@ func generateBinaryBlob(c *cli.Context) error {
 	}
 
 	return nil
+}
+
+// parseTimeInput attempts to parse the given string time input. On success,
+// it will return the time.Time value computed from the input.
+func parseTimeInput(input string) (time.Time, error) {
+	// first, check if the input is a unix timestamp
+	if parsed, err := strconv.ParseInt(input, 10, 64); err == nil {
+		// UUIDv7 does not support pre unix epoch
+		if parsed < 0 {
+			return time.Time{}, errInvalidUUIDV7Time
+		}
+
+		if parsed <= 9999999999 {
+			return time.Unix(parsed, 0), nil
+		} else {
+			return time.UnixMilli(parsed), nil
+		}
+	}
+
+	// not an integer, try various string formats
+	formats := []string{
+		time.RFC3339,
+		time.RFC3339Nano,
+		"2006-01-02T15:04:05Z",
+		"2006-01-02 15:04:05",
+		"2006-01-02 15:04",
+		"2006-01-02",
+	}
+
+	for _, format := range formats {
+		if t, err := time.Parse(format, input); err == nil {
+			if t.Before(time.Unix(0, 0)) {
+				return time.Time{}, errInvalidUUIDV7Time
+			}
+			return t, nil
+		}
+	}
+
+	return time.Time{}, fmt.Errorf("unsupported time format: %s", input)
 }
 
 func main() {
