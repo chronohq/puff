@@ -82,6 +82,14 @@ d97ab07f0f564643be5d47ddea6a95af
 puff uuid --version 7 --compact
 019741e3fd837da48a946baaa14db4ce
 
+# Print a version 7 UUID with a custom Unix timestamp
+puff uuid --version 7 --time 1687689000
+0188f21a-7440-7f23-a6d6-1b4b796a5564
+
+# Print a version 7 UUID with a custom timestamp
+puff uuid --version 7 --time "2025-06-15T10:30:00.123Z"
+01977323-90bb-72bb-89d6-86c1cbdd8912
+
 # Print UUIDs with custom suffix
 puff uuid -n 2 --compact --suffix ".png"
 8659b17b768a4ec5b48d1bac08279750.png
