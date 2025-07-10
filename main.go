@@ -7,9 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/urfave/cli/v2"
@@ -30,6 +31,7 @@ const (
 	numParam         = "num"
 	outputParam      = "output"
 	suffixParam      = "suffix"
+	timeParam        = "time"
 	urlSafeParam     = "url-safe"
 	uuidVersionParam = "version"
 
@@ -40,6 +42,7 @@ const (
 var (
 	errInvalidIterations = errors.New("--num must be greater than 0")
 	errBlankDelimiter    = errors.New("--delimiter cannot be blank")
+	errInvalidUUIDV7Time = errors.New("UUIDv7 does not support pre unix epoch")
 )
 
 // version holds the application version number. This value is set at build
@@ -141,6 +144,40 @@ func generateHex(c *cli.Context) error {
 	return nil
 }
 
+func generateUUIDV4() (uuid.UUID, error) {
+	return uuid.NewRandom()
+}
+
+func generateUUIDV7(customTime string) (uuid.UUID, error) {
+	var err error
+	var ret uuid.UUID
+	var timestamp time.Time
+
+	if ret, err = uuid.NewV7(); err != nil {
+		return uuid.UUID{}, err
+	}
+
+	if len(customTime) == 0 {
+		return ret, nil
+	}
+
+	if timestamp, err = parseTimeInput(customTime); err != nil {
+		return uuid.UUID{}, err
+	}
+
+	// replace the first 6-bytes with the custom timestamp
+	msec := timestamp.UnixMilli()
+
+	ret[0] = byte(msec >> 40)
+	ret[1] = byte(msec >> 32)
+	ret[2] = byte(msec >> 24)
+	ret[3] = byte(msec >> 16)
+	ret[4] = byte(msec >> 8)
+	ret[5] = byte(msec)
+
+	return ret, nil
+}
+
 // generateUUID generates one or more UUID strings in hexadeicmal. It defaults
 // to generating version 7 UUIDs but also supports the widely used version 4.
 func generateUUID(c *cli.Context) error {
@@ -164,14 +201,15 @@ func generateUUID(c *cli.Context) error {
 		return paintError(errBlankDelimiter)
 	}
 
-	for i := 0; i < iterations; i++ {
+	for i := range iterations {
 		var err error
 		var id uuid.UUID
 
-		if version == uuidV4 {
-			id, err = uuid.NewRandom()
-		} else {
-			id, err = uuid.NewV7()
+		switch version {
+		case uuidV4:
+			id, err = generateUUIDV4()
+		case uuidV7:
+			id, err = generateUUIDV7(c.String(timeParam))
 		}
 
 		if err != nil {
@@ -256,6 +294,45 @@ func generateBinaryBlob(c *cli.Context) error {
 	return nil
 }
 
+// parseTimeInput attempts to parse the given string time input. On success,
+// it will return the time.Time value computed from the input.
+func parseTimeInput(input string) (time.Time, error) {
+	// first, check if the input is a unix timestamp
+	if parsed, err := strconv.ParseInt(input, 10, 64); err == nil {
+		// UUIDv7 does not support pre unix epoch
+		if parsed < 0 {
+			return time.Time{}, errInvalidUUIDV7Time
+		}
+
+		if parsed <= 9999999999 {
+			return time.Unix(parsed, 0), nil
+		} else {
+			return time.UnixMilli(parsed), nil
+		}
+	}
+
+	// not an integer, try various string formats
+	formats := []string{
+		time.RFC3339,
+		time.RFC3339Nano,
+		"2006-01-02T15:04:05Z",
+		"2006-01-02 15:04:05",
+		"2006-01-02 15:04",
+		"2006-01-02",
+	}
+
+	for _, format := range formats {
+		if t, err := time.Parse(format, input); err == nil {
+			if t.Before(time.Unix(0, 0)) {
+				return time.Time{}, errInvalidUUIDV7Time
+			}
+			return t, nil
+		}
+	}
+
+	return time.Time{}, fmt.Errorf("unsupported time format: %s", input)
+}
+
 func main() {
 	delimiterFlag := &cli.StringFlag{
 		Name:    "delimiter",
@@ -324,6 +401,11 @@ func main() {
 						Name:  "compact",
 						Usage: "print uuid strings without dashes",
 					},
+					&cli.StringFlag{
+						Name:    "time",
+						Aliases: []string{"t"},
+						Usage:   "timestamp for UUID v7 (iso8601 or unix timestamp)",
+					},
 					delimiterFlag,
 					suffixFlag,
 				},
@@ -376,6 +458,7 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
