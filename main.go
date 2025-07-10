@@ -330,7 +330,7 @@ func parseTimeInput(input string) (time.Time, error) {
 		}
 	}
 
-	return time.Time{}, fmt.Errorf("unsupported time format: %s", input)
+	return time.Time{}, fmt.Errorf("invalid time value: %s", input)
 }
 
 func main() {
