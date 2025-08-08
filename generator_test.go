@@ -6,21 +6,17 @@ package main
 import (
 	"testing"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-func TestParseTimeInput(t *testing.T) {
+func TestGenerateUUIDV7WithCustomTime(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    string
 		wantTime time.Time
 		wantErr  bool
 	}{
-		{
-			name:     "with empty string",
-			input:    "",
-			wantTime: time.Time{},
-			wantErr:  true,
-		},
 		{
 			name:     "with invalid string",
 			input:    "not-a-time",
@@ -121,7 +117,7 @@ func TestParseTimeInput(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			parsed, err := parseTimeInput(test.input)
+			result, err := generateUUIDV7(test.input)
 
 			if test.wantErr {
 				if err == nil {
@@ -135,9 +131,22 @@ func TestParseTimeInput(t *testing.T) {
 				return
 			}
 
-			if !parsed.Equal(test.wantTime) {
-				t.Errorf("got: %v, want: %v", parsed, test.wantTime)
+			if result.Version() != uuidV7 {
+				t.Fatalf("unexpected uuid version, got: %d", result.Version())
+			}
+
+			extractedTime := extractTimeFromUUIDV7(result)
+
+			if !extractedTime.Equal(test.wantTime) {
+				t.Errorf("Time mismatch: got %v, want %v", extractedTime, test.wantTime)
 			}
 		})
 	}
+}
+
+func extractTimeFromUUIDV7(u uuid.UUID) time.Time {
+	msec := int64(u[0])<<40 | int64(u[1])<<32 | int64(u[2])<<24 |
+		int64(u[3])<<16 | int64(u[4])<<8 | int64(u[5])
+
+	return time.UnixMilli(msec)
 }
