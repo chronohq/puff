@@ -48,7 +48,7 @@ release: release-darwin-arm64 release-linux-amd64 release-linux-arm64 release-wi
 
 require-version:
 	@if [ "$(VERSION)" = "dev" ]; then \
-		echo "You must set the VERSION environemnt variable"; \
+		echo "VERSION environment variable is required"; \
 		exit 1; \
 	fi
 
