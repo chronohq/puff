@@ -57,6 +57,11 @@ puff --bytes 32
 puff -n 2 --delimiter ","
 d4bc48da024a728fee985a6257e88611,63100951b7ff67de3f7e9c1d0b98101d
 
+# Print hex-encoded values with custom prefix
+puff -n 2 --compact --prefix "0x"
+0x74003a413c368fd99434e42824973694
+0x27751047cd3e1314500210ce1477b9ec
+
 # Print hex-encoded values with a custom suffix
 puff -n 2 --suffix ".png"
 2259c58f9a774fe171720349cd715bed.png
@@ -111,7 +116,11 @@ YPjRDxaUYFkurRAhz0MUzzl8Hh3Y0Z79DZcrJX5R/4g=
 puff base64 --url-safe
 7KtUKGFAvVHoDdsQDIuRtQ
 
-# Print a URL-safe base64-encoded with custom suffix
+# Print a URL-safe base64-encoded value with custom prefix
+puff base64 --url-safe --prefix "bucket-x-"
+bucket-x-tyIADpZWmW5W04QlCK9TPQ
+
+# Print a URL-safe base64-encoded value with custom suffix
 puff base64 --url-safe --suffix ".png"
 BvOqihvrdg2kmtPQaxKx6A.png
 ```
