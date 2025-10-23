@@ -350,8 +350,20 @@ func main() {
 		Version: version,
 
 		// default to the hex command if no subcommand is provided
-		Action: generateHex,
-		Flags:  hexCommandFlags,
+		Action: func(c *cli.Context) error {
+			if c.Args().Present() {
+				firstArg := c.Args().First()
+
+				if !strings.HasPrefix(firstArg, "-") {
+					printError(c.App.ErrWriter, fmt.Errorf("unknown command - %s", firstArg))
+					return cli.ShowAppHelp(c)
+				}
+			}
+
+			return generateHex(c)
+		},
+
+		Flags: hexCommandFlags,
 
 		Commands: []*cli.Command{
 			{
