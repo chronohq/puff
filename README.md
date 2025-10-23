@@ -90,6 +90,11 @@ puff uuid --version 7 --time 1687689000
 puff uuid --version 7 --time "2025-06-15T10:30:00.123Z"
 01977323-90bb-72bb-89d6-86c1cbdd8912
 
+# Print UUIDs with custom prefix
+puff uuid -n 2 --compact --prefix "0x"
+0x3826b9cce03c926dbebb0c0ed7467356
+0x27751047cd3e1314500210ce1477b9ec
+
 # Print UUIDs with custom suffix
 puff uuid -n 2 --compact --suffix ".png"
 8659b17b768a4ec5b48d1bac08279750.png
@@ -111,7 +116,11 @@ YPjRDxaUYFkurRAhz0MUzzl8Hh3Y0Z79DZcrJX5R/4g=
 puff base64 --url-safe
 7KtUKGFAvVHoDdsQDIuRtQ
 
-# Print a URL-safe base64-encoded with custom suffix
+# Print a URL-safe base64-encoded value with custom prefix
+puff base64 --url-safe --prefix "bucket-x-"
+bucket-x-tyIADpZWmW5W04QlCK9TPQ
+
+# Print a URL-safe base64-encoded value with custom suffix
 puff base64 --url-safe --suffix ".png"
 BvOqihvrdg2kmtPQaxKx6A.png
 ```

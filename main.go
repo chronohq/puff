@@ -33,6 +33,7 @@ const (
 	delimiterParam   = "delimiter"
 	numParam         = "num"
 	outputParam      = "output"
+	prefixParam      = "prefix"
 	suffixParam      = "suffix"
 	timeParam        = "time"
 	urlSafeParam     = "url-safe"
@@ -117,6 +118,7 @@ func printError(w io.Writer, err error) {
 // delimiter, except the final value.
 func generateHex(c *cli.Context) error {
 	iterations := c.Int(numParam)
+	prefix := c.String(prefixParam)
 	suffix := c.String(suffixParam)
 
 	if iterations <= 0 {
@@ -141,7 +143,7 @@ func generateHex(c *cli.Context) error {
 			delimiter = defaultDelimiter
 		}
 
-		fmt.Printf("%s%s%s", hex.EncodeToString(src), suffix, delimiter)
+		fmt.Printf("%s%s%s%s", prefix, hex.EncodeToString(src), suffix, delimiter)
 	}
 
 	return nil
@@ -153,6 +155,7 @@ func generateUUID(c *cli.Context) error {
 	version := c.Int(uuidVersionParam)
 	compact := c.Bool(compactParam)
 	iterations := c.Int(numParam)
+	prefix := c.String(prefixParam)
 	suffix := c.String(suffixParam)
 
 	if version != uuidV4 && version != uuidV7 {
@@ -195,7 +198,7 @@ func generateUUID(c *cli.Context) error {
 			delimiter = defaultDelimiter
 		}
 
-		fmt.Printf("%s%s%s", line, suffix, delimiter)
+		fmt.Printf("%s%s%s%s", prefix, line, suffix, delimiter)
 	}
 
 	return nil
@@ -208,6 +211,7 @@ func generateBase64(c *cli.Context) error {
 	iterations := c.Int(numParam)
 	delimiter := resolveDelimiter(c.String(delimiterParam))
 	urlSafe := c.Bool(urlSafeParam)
+	prefix := c.String(prefixParam)
 	suffix := c.String(suffixParam)
 
 	if len(delimiter) == 0 {
@@ -226,9 +230,9 @@ func generateBase64(c *cli.Context) error {
 		}
 
 		if urlSafe {
-			fmt.Printf("%s%s%s", base64.RawURLEncoding.EncodeToString(src), suffix, delimiter)
+			fmt.Printf("%s%s%s%s", prefix, base64.RawURLEncoding.EncodeToString(src), suffix, delimiter)
 		} else {
-			fmt.Printf("%s%s%s", base64.StdEncoding.EncodeToString(src), suffix, delimiter)
+			fmt.Printf("%s%s%s%s", prefix, base64.StdEncoding.EncodeToString(src), suffix, delimiter)
 		}
 	}
 
@@ -310,6 +314,12 @@ func main() {
 		Value:   defaultDelimiter,
 	}
 
+	prefixFlag := &cli.StringFlag{
+		Name:    "prefix",
+		Aliases: []string{"p"},
+		Usage:   "optional value to prepend to the values",
+	}
+
 	suffixFlag := &cli.StringFlag{
 		Name:    "suffix",
 		Aliases: []string{"s"},
@@ -330,6 +340,7 @@ func main() {
 			Value:   1,
 		},
 		delimiterFlag,
+		prefixFlag,
 		suffixFlag,
 	}
 
@@ -376,6 +387,7 @@ func main() {
 						Usage:   "timestamp for UUID v7 (iso8601 or unix timestamp)",
 					},
 					delimiterFlag,
+					prefixFlag,
 					suffixFlag,
 				},
 			},
@@ -401,6 +413,7 @@ func main() {
 						Usage: "use url-safe encoding",
 					},
 					delimiterFlag,
+					prefixFlag,
 					suffixFlag,
 				},
 			},
